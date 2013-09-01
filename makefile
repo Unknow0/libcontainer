@@ -2,6 +2,7 @@ PROG=libcontainer.so
 CC=gcc
 CFLAGS=-I./include -g
 LDFLAGS=-shared
+PREFIX=/usr/local
 
 SRC=$(wildcard *.c)
 OBJECTS=$(SRC:.c=.o)
@@ -13,7 +14,16 @@ build: $(OBJECTS)
 %.o:%.c
 	$(CC) $(CFLAGS) -o $@ -c $^
 
-.PHONY: clean
+.PHONY: clean install uninstall
 
 clean:
 	rm $(OBJECTS)
+
+install: build
+	cp $(PROG) $(PREFIX)/lib/
+	mkdir $(PREFIX)/include/container/
+	cp include/* $(PREFIX)/include/container/
+
+uninstall:
+	rm $(PREFIX)/lib/$(PROG)
+	rm -r $(PREFIX)/include/container

@@ -2,7 +2,7 @@
 typedef bloc
 	{
 	int len;
-	void** data;
+	void *data;
 	} bloc_t;
 
 typedef struct
@@ -10,6 +10,7 @@ typedef struct
 	int bloc_size;
 	int(void*,void*) *cmp;
 	node_t *root;
+	chunked_list_t *list;
 	} btree_t;
 
 
