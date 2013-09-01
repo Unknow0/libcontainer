@@ -16,7 +16,6 @@ chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size)
 	list->chunk_size=chunk_size;
 	list->head.len=0;
 	list->head.next=NULL;
-	list->last=&list->head;
 	list->elem_size=elem_size;
 	return list;
 	}

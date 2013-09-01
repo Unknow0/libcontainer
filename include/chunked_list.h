@@ -12,7 +12,6 @@ typedef struct chunked_list
 	{
 	size_t elem_size;
 	size_t chunk_size;
-	struct chunk *last;
 	struct chunk head;
 	} chunked_list_t;
 
