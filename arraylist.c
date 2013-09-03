@@ -1,8 +1,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "arraylist.h"
+#include "container/arraylist.h"
 
+struct arraylist_it
+	{
+	iterator_t it;
+	arraylist_t *list;
+	unsigned int off;
+	};
 
 arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float grow_factor, float sink_threshold, float sink_factor)
 	{
@@ -51,14 +57,23 @@ void *arraylist_get(arraylist_t *list, unsigned int i)
 		return NULL;
 	return list->data+list->elem_size*i;
 	}
-void *arraylist_remove(arraylist_t *list, unsigned int i)
+void *arraylist_remove_return(arraylist_t *list, unsigned int i)
 	{
+	void *e;
 	if(list==NULL || i>=list->len)
 		return NULL;
-	void *e=malloc(list->elem_size);
+	e=malloc(list->elem_size);
 	if(e==NULL)
 		return NULL;
 	memcpy(e, arraylist_get(list, i), list->elem_size);
+	arraylist_remove(list, i);
+	return e;
+	}
+
+int arraylist_remove(arraylist_t *list, unsigned int i)
+	{
+	if(list==NULL || i>=list->len)
+		return 1;
 	list->len--;
 	memmove(arraylist_get(list, i), arraylist_get(list, i+1), list->elem_size*(list->len-i));
 
@@ -70,11 +85,53 @@ void *arraylist_remove(arraylist_t *list, unsigned int i)
 		list->data=realloc(list->data, new_size);
 		list->alloc_size=new_size;
 		}
-	return e;
+	return 0;
 	}
 
 void arraylist_destroy(arraylist_t *list)
 	{
 	free(list->data);
 	free(list);
+	}
+
+int arralist_iterator_reset(iterator_t *i)
+	{
+	struct arraylist_it *it=(struct arraylist_it *)i;
+	if(it==NULL)
+		return 1;
+	it->off=0;
+	return 0;
+	}
+
+int arraylist_iterator_has_next(iterator_t *i)
+	{
+	struct arraylist_it *it=(struct arraylist_it *)i;
+	return it->off<it->list->len;
+	}
+void *arraylist_iterator_next(iterator_t *i)
+	{
+	struct arraylist_it *it=(struct arraylist_it *)i;
+	if(it==NULL)
+		retrun NULL;
+	return arraylist_get(it->list, it->off++);
+	}
+int arraylist_iterator_remove(iterator_t *i)
+	{
+	struct arraylist_it *it=(struct arraylist_it *)i;
+	if(it==NULL)
+		return 1;
+	return arraylist_remove(it->list, it->off--);
+	}
+
+iterator_t *arraylist_iterator(arraylist_t *list)
+	{
+	struct arraylist_it *it=malloc(sizeof(struct arraylist_it));
+	it->it.reset=&arralist_iterator_reset;
+	it->it.has_next=&arraylist_iterator_has_next;
+	it->it.next=&arraylist_iterator_next;
+	it->it.remove=&arraylist_iterator_remove;
+	it->list=list;
+	it->off=0;
+
+	return (iterator_t *)it;
 	}

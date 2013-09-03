@@ -1,6 +1,8 @@
 #ifndef _ARRAYLIST_H
 #define _ARRAYLIST_H
 
+#include <container/iterator.h>
+
 typedef struct arraylist
 	{
 	size_t elem_size;
@@ -28,21 +30,32 @@ arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float 
  * @return 0 if element is added, 1 if failed to grow, 2 if list == NULL or e == NULL.
  */
 int arraylist_add(arraylist_t *list, void *e);
+
 /**
- * retrun the nth element or NULL if list == NULL or i> list_size.
+ * return the nth element or NULL if list == NULL or i> list_size.
  * /!\ you got access directly on the list do no free returned element!
  */
 void *arraylist_get(arraylist_t *list, unsigned int i);
+
 /**
  * remove and return element from the list.
  * return NULL if list == NULL or i> list_size
  * /!\ you should free the returned element.
  */
-void *arraylist_remove(arraylist_t *list, unsigned int i);
+void *arraylist_remove_return(arraylist_t *list, unsigned int i);
+
+/** return 0 on success */
+int arraylist_remove(arraylist_t *list, unsigned int i);
 
 /**
  * free the list and all element returned by arraylist_get
  */
 void arraylist_destroy(arraylist_t *list);
+
+/**
+ * return an iterator on a array_list.
+ * /!\ if you remove an element before the current element iterator will miss the next element.
+ */
+iterator_t *arraylist_iterator(arraylist_t *list);
 
 #endif
