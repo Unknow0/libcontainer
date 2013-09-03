@@ -21,7 +21,7 @@ clean:
 
 install: build
 	cp $(PROG) $(PREFIX)/lib/
-	mkdir $(PREFIX)/include/container/
+	mkdir -p $(PREFIX)/include/container/
 	cp include/* $(PREFIX)/include/container/
 
 uninstall:
