@@ -112,7 +112,7 @@ void *arraylist_iterator_next(iterator_t *i)
 	{
 	struct arraylist_it *it=(struct arraylist_it *)i;
 	if(it==NULL)
-		retrun NULL;
+		return NULL;
 	return arraylist_get(it->list, it->off++);
 	}
 int arraylist_iterator_remove(iterator_t *i)

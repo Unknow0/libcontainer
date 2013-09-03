@@ -6,6 +6,9 @@ simple c container library
 #### arraylist
 a growing array
 
+#### arraylist
+a common linked list
+
 #### chunked_list
 a linked array list.
 removing element will only move value in the chunk, adding somthing back will take the first free space.

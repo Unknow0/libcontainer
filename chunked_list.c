@@ -106,7 +106,7 @@ void *chunked_list_remove_return(chunked_list_t *list, unsigned int i)
 		i-=list->chunk_size;
 		}
 	if(chunk==NULL)
-		retrun NULL;
+		return NULL;
 	memcpy(e, chunk->data+list->elem_size*i, list->elem_size);
 	chunk->len--;
 	memmove(chunk->data+list->elem_size*i, chunk->data+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
