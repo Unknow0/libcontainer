@@ -7,8 +7,11 @@ PREFIX=/usr/local
 SRC=$(wildcard *.c)
 OBJECTS=$(SRC:.c=.o)
 
-all:build
-build: $(OBJECTS)
+all: build
+
+build: $(PROG)
+
+$(PROG): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $(PROG) $^
 
 %.o:%.c
@@ -22,7 +25,7 @@ clean:
 install: build
 	cp $(PROG) $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/include/container/
-	cp include/* $(PREFIX)/include/container/
+	cp container/* $(PREFIX)/include/container/
 
 uninstall:
 	rm $(PREFIX)/lib/$(PROG)
