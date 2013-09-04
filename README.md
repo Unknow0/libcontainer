@@ -6,7 +6,7 @@ simple c container library
 #### arraylist
 a growing array
 
-#### arraylist
+#### linked_list
 a common linked list
 
 #### chunked_list
