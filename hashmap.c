@@ -74,7 +74,7 @@ int hashmap_add(hashmap_t *map, void *e)
 		return 2;
 	
 	if(map->map_size*map->load_factor<=map->entries_count)
-		hasmap_grow(map);
+		hashmap_grow(map);
 
 	h=map->hash(e);
 	i=h%map->map_size;
