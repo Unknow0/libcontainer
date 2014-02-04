@@ -17,8 +17,8 @@
  ******************************************************************************/
 
 #include <string.h>
-#include <container/hashmap.h>
 #include <stdio.h>
+#include "container/hashmap.h"
 
 struct hashmap_it
 	{
@@ -27,12 +27,13 @@ struct hashmap_it
 	size_t off;
 	};
 
-hashmap_t *hashmap_create(size_t initial_cap, float load_factor, size_t (*hash_func)(void*))
+hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*))
 	{
 	hashmap_t *hash;
-	if(initial_cap==0 || hash_func==NULL)
+	if(hash_func==NULL)
 		return NULL;
 
+	size_t initial_cap=1<<log2s;
 	hash=malloc(sizeof(hashmap_t));
 	hash->map_entries=malloc(sizeof(void*)*initial_cap);
 	memset(hash->map_entries, 0, sizeof(void*)*initial_cap);
@@ -53,6 +54,7 @@ int hashmap_grow(hashmap_t *map)
 	void **entries=malloc(sizeof(void*)*nsize);
 	if(entries==NULL)
 		return 1;
+	memset(entries, 0, sizeof(void*)*nsize);
 	for(i=0; i<map->map_size; i++)
 		{
 		if(map->map_entries[i]!=NULL)

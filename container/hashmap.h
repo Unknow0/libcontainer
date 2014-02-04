@@ -32,9 +32,10 @@ typedef struct
 
 /**
  * allocate a new hashmap
+ * initial capacity is 2^log2s
  * return null on error
  */
-hashmap_t *hashmap_create(size_t initial_cap, float load_factor, size_t (*hash_func)(void*));
+hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*));
 
 /**
  * put an element into the map.

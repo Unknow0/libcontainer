@@ -28,6 +28,9 @@ struct chunked_list_it
 	unsigned int off;
 	};
 
+/** get data area from a chunk */
+#define DATA(c) (((void*)c)+sizeof(struct chunk))
+
 chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size)
 	{
 	chunked_list_t *list;
@@ -54,17 +57,24 @@ int chunked_list_add(chunked_list_t *list, void *e)
 	if(chunk==NULL || chunk->len==list->chunk_size)
 		{
 		struct chunk *c=malloc(sizeof(struct chunk)+list->elem_size*list->chunk_size);
-		if(chunk==NULL)
+		if(c==NULL)
 			return 1;
 		c->len=0;
 		c->next=NULL;
 		if(chunk==NULL)
+			{
 			list->head=c;
+			c->prev=NULL;
+			}
 		else
+			{
+			c->prev=chunk;
 			chunk->next=c;
+			}
+		chunk=c;
 		}
 
-	memcpy(&chunk->data+list->elem_size*chunk->len++, e, list->elem_size);
+	memmove(DATA(chunk)+list->elem_size*chunk->len++, e, list->elem_size);
 	return 0;
 	}
 
@@ -79,7 +89,7 @@ void *chunked_list_get(chunked_list_t *list, unsigned int i)
 		chunk=chunk->next;
 		i-=list->chunk_size;
 		}
-	return chunk==NULL?NULL:chunk->data+list->elem_size*i;
+	return chunk==NULL?NULL:DATA(chunk)+list->elem_size*i;
 	}
 int chunked_list_remove(chunked_list_t *list, unsigned int i)
 	{
@@ -96,7 +106,7 @@ int chunked_list_remove(chunked_list_t *list, unsigned int i)
 	if(chunk==NULL)
 		return 2;
 	chunk->len--;
-	memmove(chunk->data+list->elem_size*i, chunk->data+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
+	memmove(DATA(chunk)+list->elem_size*i, DATA(chunk)+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
 	
 	if(chunk->len==0)
 		{
@@ -124,9 +134,9 @@ void *chunked_list_remove_return(chunked_list_t *list, unsigned int i)
 		}
 	if(chunk==NULL)
 		return NULL;
-	memcpy(e, chunk->data+list->elem_size*i, list->elem_size);
+	memcpy(e, DATA(chunk)+list->elem_size*i, list->elem_size);
 	chunk->len--;
-	memmove(chunk->data+list->elem_size*i, chunk->data+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
+	memmove(DATA(chunk)+list->elem_size*i, DATA(chunk)+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
 	
 	if(chunk->len==0)
 		{
@@ -169,7 +179,7 @@ void *chunked_list_it_next(iterator_t *i)
 	struct chunked_list_it *it=(struct chunked_list_it *)i;
 	if(it==NULL || it->list==NULL || it->chunk==NULL || (it->chunk->next==NULL && it->chunk->len>=it->off))
 		return NULL;
-	void *e=it->chunk->data+it->list->elem_size*it->off++;
+	void *e=DATA(it->chunk)+it->list->elem_size*it->off++;
 	if(it->off>=it->chunk->len)
 		it->chunk=it->chunk->next;
 	return e;
@@ -183,7 +193,7 @@ int chunked_list_it_remove(iterator_t *i)
 	it->chunk->len--;
 	it->off--;
 	elem_size=it->list->elem_size;
-	memmove(it->chunk->data+elem_size*it->off, it->chunk->data+elem_size*(it->off+1), elem_size*(it->chunk->len-it->off));
+	memmove(DATA(it->chunk)+elem_size*it->off, DATA(it->chunk)+elem_size*(it->off+1), elem_size*(it->chunk->len-it->off));
 	
 	if(it->chunk->len==0)
 		{

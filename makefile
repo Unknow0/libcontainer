@@ -1,32 +1,43 @@
-PROG=libcontainer.so
+PROG=libcontainer
 CC=gcc
-CFLAGS=-I./ -g
+CFLAGS=-g
 LDFLAGS=-shared
 PREFIX=/usr/local
 
+TEST=test
+TEST_LDFLAGS=
+TEST_OBJ=test.o
+
 SRC=$(wildcard *.c)
-OBJECTS=$(SRC:.c=.o)
+OBJECTS=$(filter-out $(TEST_OBJ),$(SRC:.c=.o))
 
 all: build
 
-build: $(PROG)
+build: $(PROG).so $(PROG).a
 
-$(PROG): $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $(PROG) $^
+$(PROG).so: $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^
+$(PROG).a: $(OBJECTS)
+	rm -f $@
+	ar rcs $@ $^
 
-%.o:%.c
-	$(CC) $(CFLAGS) -o $@ -c $^
+$(TEST): $(TEST_OBJ) $(OBJECTS)
+	$(CC) $(TEST_LDFLAGS) -o $< $^
+
+%.o:%.c %.h
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 .PHONY: clean install uninstall
 
 clean:
-	rm $(OBJECTS)
+	rm -f $(OBJECTS)
+	rm -f $(TEST_OBJ)
 
 install: build
-	cp $(PROG) $(PREFIX)/lib/
+	cp $(PROG).* $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/include/container/
 	cp container/* $(PREFIX)/include/container/
 
 uninstall:
-	rm $(PREFIX)/lib/$(PROG)
-	rm -r $(PREFIX)/include/container
+	rm -f $(PREFIX)/lib/$(PROG).*
+	rm -rf $(PREFIX)/include/container

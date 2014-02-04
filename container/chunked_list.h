@@ -15,7 +15,7 @@
  * with libcontainer; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
-#ifndef _CHUNCKED_LIST_H
+#ifndef _CHUNKED_LIST_H
 #define _CHUNKED_LIST_H
 
 #include <stdlib.h>
@@ -26,7 +26,6 @@ struct chunk
 	unsigned int len;
 	struct chunk *next;
 	struct chunk *prev;
-	void *data;
 	};
 
 typedef struct chunked_list
