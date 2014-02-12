@@ -31,7 +31,7 @@ void string_init()
 size_t string_hash(void *e)
 	{
 	size_t h=0;
-	char *c=(char *)e;
+	char *c=*(char **)e;
 	while(*c!=0)
 		h=(h<<2)+*c++;
 	return h;
@@ -54,7 +54,7 @@ string_t *string_create_unique(const char *str)
 	{
 	if(str==NULL)
 		return NULL;
-	size_t hash=string_hash((void*)str);
+	size_t hash=string_hash((void*)&str);
 	string_t *s=hashmap_get(string_unique, hash);
 	if(s==NULL)
 		{

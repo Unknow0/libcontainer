@@ -22,7 +22,7 @@ $(PROG).a: $(OBJECTS)
 	ar rcs $@ $^
 
 $(TEST): $(TEST_OBJ) $(OBJECTS)
-	$(CC) $(TEST_LDFLAGS) -o $< $^
+	$(CC) $(TEST_LDFLAGS) -o $@ $^
 
 %.o:%.c %.h
 	$(CC) $(CFLAGS) -o $@ -c $<

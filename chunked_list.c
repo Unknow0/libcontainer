@@ -84,7 +84,7 @@ void *chunked_list_get(chunked_list_t *list, unsigned int i)
 	if(list==NULL)
 		return NULL;
 	chunk=list->head;
-	while(chunk!=NULL && i>list->chunk_size)
+	while(chunk!=NULL && i>=list->chunk_size)
 		{
 		chunk=chunk->next;
 		i-=list->chunk_size;
