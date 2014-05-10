@@ -24,7 +24,8 @@ typedef struct
 	{
 	const char *str;
 
-	unsigned int ref_count;
+	size_t ref_count;
+	const size_t len;
 	} string_t;
 
 size_t string_hash(void *str);

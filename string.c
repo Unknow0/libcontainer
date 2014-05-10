@@ -47,6 +47,7 @@ string_t *string_create(const char *str)
 
 	s->str=strdup(str);
 	s->ref_count=1;
+	*(size_t *)&s->len=strlen(s->str);
 	return s;
 	}
 
