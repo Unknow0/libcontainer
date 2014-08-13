@@ -149,12 +149,12 @@ void chunked_list_clear(chunked_list_t *list)
 	struct chunk *c=list->head;
 	if(c==NULL)	// nothing to do
 		return;
-	c->size=0;
+	c->len=0;
 	c=c->next;
 	list->size=0;
 	while(c!=NULL)
 		{
-		struct chunk *c2=c->next
+		struct chunk *c2=c->next;
 		free(c);
 		c=c2;
 		}
