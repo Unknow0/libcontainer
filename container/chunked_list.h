@@ -72,6 +72,10 @@ void *chunked_list_remove_return(chunked_list_t *list, unsigned int i);
 int chunked_list_remove(chunked_list_t *list, unsigned int i);
 
 /**
+ * remove everything from the list.
+ */
+void chunked_list_clear(chunked_list_t *list);
+/**
  * free the list and all element returned by chunked_list_get
  */
 void chunked_list_destroy(chunked_list_t *list);
