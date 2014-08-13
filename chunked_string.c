@@ -31,6 +31,7 @@ chunked_string_t *chunked_string_create(size_t chunk_size)
 
 	list->chunk_size=chunk_size;
 	list->head=NULL;
+	list->size=0;
 	return list;
 	}
 
@@ -62,6 +63,7 @@ int chunked_string_add(chunked_string_t *list, const char *str)
 		l=len;
 	memmove(chunk->data+chunk->len, str, l);
 	chunk->len+=l;
+	list->size+=l;
 	if(l<len)
 		return chunked_string_add(list, str+l);
 	return 0;
@@ -95,6 +97,7 @@ int chunked_string_remove(chunked_string_t *list, unsigned int i, unsigned int l
 		}
 	if(chunk==NULL)
 		return 2;
+	list->size-=len;
 	if(chunk->len<i+len)
 		{
 		len-=chunk->len-i;
@@ -154,4 +157,5 @@ void chunked_string_destroy(chunked_string_t *list)
 		c->len=0;
 		c=c->next;
 		}
+	list->size=0;
 	}

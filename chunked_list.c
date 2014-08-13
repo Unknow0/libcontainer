@@ -20,14 +20,6 @@
 
 #include "container/chunked_list.h"
 
-struct chunked_list_it
-	{
-	iterator_t it;
-	chunked_list_t *list;
-	struct chunk *chunk;
-	unsigned int off;
-	};
-
 /** get data area from a chunk */
 #define DATA(c) (((void*)c)+sizeof(struct chunk))
 
@@ -43,6 +35,7 @@ chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size)
 	list->chunk_size=chunk_size;
 	list->elem_size=elem_size;
 	list->head=NULL;
+	list->size=0;
 	return list;
 	}
 
@@ -75,6 +68,7 @@ int chunked_list_add(chunked_list_t *list, void *e)
 		}
 
 	memmove(DATA(chunk)+list->elem_size*chunk->len++, e, list->elem_size);
+	list->size++;
 	return 0;
 	}
 
@@ -107,6 +101,7 @@ int chunked_list_remove(chunked_list_t *list, unsigned int i)
 		return 2;
 	chunk->len--;
 	memmove(DATA(chunk)+list->elem_size*i, DATA(chunk)+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
+	list->size--;
 	
 	if(chunk->len==0)
 		{
@@ -136,6 +131,7 @@ void *chunked_list_remove_return(chunked_list_t *list, unsigned int i)
 		return NULL;
 	memcpy(e, DATA(chunk)+list->elem_size*i, list->elem_size);
 	chunk->len--;
+	list->size--;
 	memmove(DATA(chunk)+list->elem_size*i, DATA(chunk)+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
 	
 	if(chunk->len==0)
@@ -177,11 +173,14 @@ int chunked_list_it_has_next(iterator_t *i)
 void *chunked_list_it_next(iterator_t *i)
 	{
 	struct chunked_list_it *it=(struct chunked_list_it *)i;
-	if(it==NULL || it->list==NULL || it->chunk==NULL || (it->chunk->next==NULL && it->chunk->len>=it->off))
+	if(!chunked_list_it_has_next(i))
 		return NULL;
 	void *e=DATA(it->chunk)+it->list->elem_size*it->off++;
 	if(it->off>=it->chunk->len)
+		{
 		it->chunk=it->chunk->next;
+		it->off=0;
+		}
 	return e;
 	}
 int chunked_list_it_remove(iterator_t *i)
@@ -191,6 +190,7 @@ int chunked_list_it_remove(iterator_t *i)
 	if(it==NULL)
 		return 1;
 	it->chunk->len--;
+	it->list->size--;
 	it->off--;
 	elem_size=it->list->elem_size;
 	memmove(DATA(it->chunk)+elem_size*it->off, DATA(it->chunk)+elem_size*(it->off+1), elem_size*(it->chunk->len-it->off));

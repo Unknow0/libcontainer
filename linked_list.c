@@ -19,13 +19,6 @@
 
 #include "container/linked_list.h"
 
-struct linked_list_it
-	{
-	iterator_t it;
-	linked_list_t *list;
-	linked_node_t *cur;
-	};
-
 linked_list_t *linked_list_create(size_t elem_size)
 	{
 	linked_list_t *list;
@@ -36,6 +29,7 @@ linked_list_t *linked_list_create(size_t elem_size)
 		return NULL;
 	list->elem_size=elem_size;
 	list->head=NULL;
+	list->size=0;
 	return list;
 	}
 
@@ -51,6 +45,7 @@ int linked_list_add_head(linked_list_t *list, void *e)
 	node->next=list->head;
 	list->head->prev=node;
 	list->head=node;
+	list->size++;
 	return 0;
 	}
 
@@ -66,6 +61,7 @@ int linked_list_add_tail(linked_list_t *list, void *e)
 	node->next=list->head;
 	list->head->prev=node;
 	list->head=node;
+	list->size++;
 	return 0;
 	}
 
@@ -95,6 +91,7 @@ int linked_list_it_remove(iterator_t *i)
 	node=it->cur->prev;
 	node->next=it->cur->next;
 	it->cur->next->prev=node;
+	it->list->size--;
 	return 0;
 	}
 

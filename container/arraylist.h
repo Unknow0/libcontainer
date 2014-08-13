@@ -25,11 +25,18 @@ typedef struct arraylist
 	size_t elem_size;
 	size_t alloc_size;
 	void *data;
-	int len;
+	size_t size;
 	float grow_factor;
 	float sink_factor;
 	float sink_threshold;
 	} arraylist_t;
+
+struct arraylist_it
+	{
+	iterator_t it;
+	arraylist_t *list;
+	size_t off;
+	};
 
 /**
  * allocate a new array list

@@ -31,6 +31,7 @@ struct str_chunk
 typedef struct chunked_string
 	{
 	size_t chunk_size;
+	size_t size;
 	struct str_chunk *head;
 	} chunked_string_t;
 

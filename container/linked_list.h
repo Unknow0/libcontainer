@@ -31,10 +31,17 @@ typedef struct list_node
 typedef struct
 	{
 	size_t elem_size;
-
+	size_t size;
 	struct list_node *head;
 	struct list_node *tail;
 	} linked_list_t;
+
+struct linked_list_it
+	{
+	iterator_t it;
+	linked_list_t *list;
+	linked_node_t *cur;
+	};
 
 linked_list_t *linked_list_create(size_t elem_size);
 

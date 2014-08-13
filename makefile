@@ -1,6 +1,6 @@
 PROG=libcontainer
 CC=gcc
-CFLAGS=-g
+CFLAGS=-I. -g
 LDFLAGS=-shared
 PREFIX=/usr/local
 

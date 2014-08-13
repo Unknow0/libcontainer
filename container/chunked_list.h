@@ -31,9 +31,18 @@ struct chunk
 typedef struct chunked_list
 	{
 	size_t elem_size;
+	size_t size;
 	size_t chunk_size;
 	struct chunk *head;
 	} chunked_list_t;
+
+struct chunked_list_it
+	{
+	iterator_t it;
+	chunked_list_t *list;
+	struct chunk *chunk;
+	size_t off;
+	};
 
 /**
  * allocate a new chunked list

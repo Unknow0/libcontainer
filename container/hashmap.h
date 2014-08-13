@@ -30,6 +30,13 @@ typedef struct
 	void **map_entries;
 	} hashmap_t;
 
+struct hashmap_it
+	{
+	iterator_t it;
+	hashmap_t *map;
+	size_t off;
+	};
+
 /**
  * allocate a new hashmap
  * initial capacity is 2^log2s

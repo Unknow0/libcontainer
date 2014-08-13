@@ -20,13 +20,6 @@
 
 #include "container/arraylist.h"
 
-struct arraylist_it
-	{
-	iterator_t it;
-	arraylist_t *list;
-	unsigned int off;
-	};
-
 arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float grow_factor, float sink_threshold, float sink_factor)
 	{
 	arraylist_t *list;
@@ -42,7 +35,7 @@ arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float 
 		return NULL;
 		}
 	list->alloc_size=initial_cap;
-	list->len=0;
+	list->size=0;
 	list->elem_size=elem_size;
 	list->grow_factor=1.+grow_factor;
 	list->sink_factor=sink_factor;
@@ -54,7 +47,7 @@ int arraylist_add(arraylist_t *list, void *e)
 	{
 	if(list==NULL || e==NULL)
 		return 2;
-	if(list->len==list->alloc_size)
+	if(list->size==list->alloc_size)
 		{
 		size_t new_size=(size_t)(list->alloc_size*list->grow_factor);
 		void *ptr=realloc(list->data, new_size*list->elem_size);
@@ -64,20 +57,20 @@ int arraylist_add(arraylist_t *list, void *e)
 		list->alloc_size=new_size;
 		}
 
-	memcpy(arraylist_get(list, list->len++), e, list->elem_size);
+	memcpy(arraylist_get(list, list->size++), e, list->elem_size);
 	return 0;
 	}
 
 void *arraylist_get(arraylist_t *list, unsigned int i)
 	{
-	if(list==NULL || i>=list->len)
+	if(list==NULL || i>=list->size)
 		return NULL;
 	return list->data+list->elem_size*i;
 	}
 void *arraylist_remove_return(arraylist_t *list, unsigned int i)
 	{
 	void *e;
-	if(list==NULL || i>=list->len)
+	if(list==NULL || i>=list->size)
 		return NULL;
 	e=malloc(list->elem_size);
 	if(e==NULL)
@@ -89,16 +82,16 @@ void *arraylist_remove_return(arraylist_t *list, unsigned int i)
 
 int arraylist_remove(arraylist_t *list, unsigned int i)
 	{
-	if(list==NULL || i>=list->len)
+	if(list==NULL || i>=list->size)
 		return 1;
-	list->len--;
-	memmove(arraylist_get(list, i), arraylist_get(list, i+1), list->elem_size*(list->len-i));
+	list->size--;
+	memmove(arraylist_get(list, i), arraylist_get(list, i+1), list->elem_size*(list->size-i));
 
-	if((float)list->len/(float)list->alloc_size<list->sink_threshold)
+	if((float)list->size/(float)list->alloc_size<list->sink_threshold)
 		{
 		size_t new_size=(size_t)(list->alloc_size*list->sink_factor);
-		if(new_size<list->len)
-			new_size=list->len;
+		if(new_size<list->size)
+			new_size=list->size;
 		list->data=realloc(list->data, new_size*list->elem_size);
 		list->alloc_size=new_size;
 		}
@@ -123,7 +116,7 @@ int arraylist_iterator_reset(iterator_t *i)
 int arraylist_iterator_has_next(iterator_t *i)
 	{
 	struct arraylist_it *it=(struct arraylist_it *)i;
-	return it==NULL?0:it->off<it->list->len;
+	return it==NULL?0:it->off<it->list->size;
 	}
 void *arraylist_iterator_next(iterator_t *i)
 	{

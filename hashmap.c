@@ -20,13 +20,6 @@
 #include <stdio.h>
 #include "container/hashmap.h"
 
-struct hashmap_it
-	{
-	iterator_t it;
-	hashmap_t *map;
-	size_t off;
-	};
-
 hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*))
 	{
 	hashmap_t *hash;
