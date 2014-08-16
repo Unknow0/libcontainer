@@ -15,5 +15,8 @@ EXTRA_PROGRAMS=test
 test_SOURCES=src/test.c
 test_LDADD=libcontainer.la
 
+pkgconfigdir=$(libdir)/pkgconfig
+pkgconfig_DATA=container.pc
+
 distclean-local:
 	-rm -rf Makefile.in aclocal.m4 autom4te.cache/ config.guess config.sub depcomp install-sh ltmain.sh missing
