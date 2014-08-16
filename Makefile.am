@@ -1,0 +1,19 @@
+EXTRA_DIST=README.md
+
+lib_LTLIBRARIES=libcontainer.la
+libcontainer_la_SOURCES=\
+	src/arraylist.c \
+	src/chunked_string.c \
+	src/linked_list.c \
+	src/chunked_list.c \
+	src/hashmap.c \
+	src/string.c
+
+pkginclude_HEADERS=container/*.h
+
+EXTRA_PROGRAMS=test
+test_SOURCES=src/test.c
+test_LDADD=libcontainer.la
+
+distclean-local:
+	-rm -rf Makefile.in aclocal.m4 autom4te.cache/ config.guess config.sub depcomp install-sh ltmain.sh missing
