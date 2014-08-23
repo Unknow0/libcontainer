@@ -25,7 +25,7 @@ chunked_string_t *chunked_string_create(size_t chunk_size)
 	chunked_string_t *list;
 	if(chunk_size==0)
 		return NULL;
-	list=malloc(sizeof(chunked_string_t)+chunk_size);
+	list=malloc(sizeof(chunked_string_t));
 	if(list==NULL)
 		return NULL;
 

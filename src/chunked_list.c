@@ -238,4 +238,5 @@ iterator_t *chunked_list_iterator(chunked_list_t *list)
 	it->list=list;
 	it->chunk=list->head;
 	it->off=0;
+	return it;
 	}

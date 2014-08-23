@@ -37,9 +37,9 @@ typedef struct iterator
 	} iterator_t;
 
 // define some utility macro
-#define iterator_reset(it)		it->reset(it)
-#define iterator_has_next(it)	it->has_next(it)
-#define iterator_next(it)		it->next(it)
-#define iterator_remove(it)		it->remove(it)
+#define iterator_reset(it)		(it)->reset(it)
+#define iterator_has_next(it)	(it)->has_next(it)
+#define iterator_next(it)		(it)->next(it)
+#define iterator_remove(it)		(it)->remove(it)
 
 #endif
