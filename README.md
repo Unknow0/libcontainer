@@ -3,6 +3,12 @@ libcontainer
 
 simple c container library
 
+### Install
+	autoreconf -fis
+	./configure
+	make
+	make install
+
 #### arraylist
 a growing array
 
