@@ -3,6 +3,8 @@
 
 AC_PREREQ([2.69])
 AC_INIT([container], [1.0])
+AC_CONFIG_AUX_DIR([tools])
+
 LT_INIT
 AM_INIT_AUTOMAKE([foreign])
 

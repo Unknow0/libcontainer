@@ -19,4 +19,4 @@ pkgconfigdir=$(libdir)/pkgconfig
 pkgconfig_DATA=container.pc
 
 distclean-local:
-	-rm -rf Makefile.in aclocal.m4 autom4te.cache/ config.guess config.sub depcomp install-sh ltmain.sh missing
+	-rm -rf Makefile.in aclocal.m4 autom4te.cache/ tools/*
