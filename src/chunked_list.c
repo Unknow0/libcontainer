@@ -191,12 +191,12 @@ void *chunked_list_it_next(iterator_t *i)
 	struct chunked_list_it *it=(struct chunked_list_it *)i;
 	if(!chunked_list_it_has_next(i))
 		return NULL;
-	void *e=DATA(it->chunk)+it->list->elem_size*it->off++;
 	if(it->off>=it->chunk->len)
 		{
 		it->chunk=it->chunk->next;
 		it->off=0;
 		}
+	void *e=DATA(it->chunk)+it->list->elem_size*it->off++;
 	return e;
 	}
 int chunked_list_it_remove(iterator_t *i)
@@ -209,7 +209,7 @@ int chunked_list_it_remove(iterator_t *i)
 	it->list->size--;
 	it->off--;
 	elem_size=it->list->elem_size;
-	if(it->chunk->len<it->list->chunk_size)
+	if(it->chunk->len<it->list->chunk_size && it->chunk->len>0)
 		memmove(DATA(it->chunk)+elem_size*it->off, DATA(it->chunk)+elem_size*(it->off+1), elem_size*(it->chunk->len-it->off));
 	
 	if(it->chunk->len==0)
@@ -219,9 +219,13 @@ int chunked_list_it_remove(iterator_t *i)
 			it->list->head=it->chunk->next;
 		else
 			prev->next=it->chunk->next;
-		it->chunk->next->prev=prev;
+		if(it->chunk->next!=NULL)
+			it->chunk->next->prev=prev;
 		free(it->chunk);
-		it->chunk=prev->next;
+		if(prev==NULL)
+			it->chunk=it->list->head;
+		else
+			it->chunk=prev->next;
 		it->off=0;
 		}
 	return 0;
