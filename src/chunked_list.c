@@ -209,7 +209,8 @@ int chunked_list_it_remove(iterator_t *i)
 	it->list->size--;
 	it->off--;
 	elem_size=it->list->elem_size;
-	memmove(DATA(it->chunk)+elem_size*it->off, DATA(it->chunk)+elem_size*(it->off+1), elem_size*(it->chunk->len-it->off));
+	if(it->chunk->len<it->list->chunk_size)
+		memmove(DATA(it->chunk)+elem_size*it->off, DATA(it->chunk)+elem_size*(it->off+1), elem_size*(it->chunk->len-it->off));
 	
 	if(it->chunk->len==0)
 		{
