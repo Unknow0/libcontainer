@@ -23,7 +23,7 @@
 /** get data area from a chunk */
 #define DATA(c) (((void*)c)+sizeof(struct chunk))
 
-chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size)
+chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size, void (*destructor)(void *))
 	{
 	chunked_list_t *list;
 	if(chunk_size==0 || elem_size==0)
@@ -36,6 +36,7 @@ chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size)
 	list->elem_size=elem_size;
 	list->head=NULL;
 	list->size=0;
+	list->destructor=destructor;
 	return list;
 	}
 
@@ -100,6 +101,8 @@ int chunked_list_remove(chunked_list_t *list, unsigned int i)
 	if(chunk==NULL)
 		return 2;
 	chunk->len--;
+	if(list->destructor!=NULL)
+		list->destructor(DATA(chunk)+list->elem_size*i);
 	memmove(DATA(chunk)+list->elem_size*i, DATA(chunk)+list->elem_size*(i+1), list->elem_size*(chunk->len-i));
 	list->size--;
 	
@@ -149,29 +152,27 @@ void chunked_list_clear(chunked_list_t *list)
 	struct chunk *c=list->head;
 	if(c==NULL)	// nothing to do
 		return;
-	c->len=0;
-	c=c->next;
 	list->size=0;
 	while(c!=NULL)
 		{
-		struct chunk *c2=c->next;
+		struct chunk *chunk=c->next;
+		if(list->destructor!=NULL)
+			{
+			void *e=DATA(c);
+			int i;
+			for(i=0; i<c->len; i++)
+				list->destructor(e+list->elem_size*i);
+			}
 		free(c);
-		c=c2;
+		c=chunk;
 		}
 	}
 
 void chunked_list_destroy(chunked_list_t *list)
 	{
-	struct chunk *chunk;
 	if(list==NULL)
 		return;
-	chunk=list->head;
-	while(chunk!=NULL)
-		{
-		struct chunk *c=chunk->next;
-		free(chunk);
-		chunk=c;
-		}
+	chunked_list_clear(list);
 	free(list);
 	}
 int chunked_list_it_reset(iterator_t *i)
@@ -210,7 +211,11 @@ int chunked_list_it_remove(iterator_t *i)
 	it->off--;
 	elem_size=it->list->elem_size;
 	if(it->chunk->len<it->list->chunk_size && it->chunk->len>0)
+		{
+		if(it->list->destructor!=NULL)
+			it->list->destructor(DATA(it->chunk)+elem_size*it->off);
 		memmove(DATA(it->chunk)+elem_size*it->off, DATA(it->chunk)+elem_size*(it->off+1), elem_size*(it->chunk->len-it->off));
+		}
 	
 	if(it->chunk->len==0)
 		{

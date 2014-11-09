@@ -34,6 +34,7 @@ typedef struct chunked_list
 	size_t size;
 	size_t chunk_size;
 	struct chunk *head;
+	void (*destructor)(void *);
 	} chunked_list_t;
 
 struct chunked_list_it
@@ -45,9 +46,9 @@ struct chunked_list_it
 	};
 
 /**
- * allocate a new chunked list
+ * allocate a new chunked list.
  */
-chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size);
+chunked_list_t *chunked_list_create(size_t chunk_size, size_t elem_size, void (*destructor)(void *));
 
 /**
  * add element to the list, it will be copied in the list.
