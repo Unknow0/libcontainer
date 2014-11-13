@@ -245,6 +245,7 @@ iterator_t *chunked_list_iterator(chunked_list_t *list)
 	it->it.next=&chunked_list_it_next;
 	it->it.reset=&chunked_list_it_reset;
 	it->it.remove=&chunked_list_it_remove;
+	it->it.dispose=&free;
 	it->list=list;
 	it->chunk=list->head;
 	it->off=0;

@@ -20,7 +20,7 @@
 
 #include "container/arraylist.h"
 
-arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float grow_factor, float sink_threshold, float sink_factor)
+arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float grow_factor, float sink_threshold, float sink_factor, void (*destructor)(void*))
 	{
 	arraylist_t *list;
 	if(grow_factor<=0. || sink_threshold<0. || sink_factor<0.)
@@ -40,6 +40,7 @@ arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float 
 	list->grow_factor=1.+grow_factor;
 	list->sink_factor=sink_factor;
 	list->sink_threshold=sink_threshold;
+	list->destructor=destructor;
 	return list;
 	}
 
@@ -70,13 +71,17 @@ void *arraylist_get(arraylist_t *list, unsigned int i)
 void *arraylist_remove_return(arraylist_t *list, unsigned int i)
 	{
 	void *e;
+	void (*d)(void *);
 	if(list==NULL || i>=list->size)
 		return NULL;
 	e=malloc(list->elem_size);
 	if(e==NULL)
 		return NULL;
 	memcpy(e, arraylist_get(list, i), list->elem_size);
+	d=list->destructor;
+	list->destructor=NULL;
 	arraylist_remove(list, i);
+	list->destructor=d;
 	return e;
 	}
 
@@ -85,6 +90,8 @@ int arraylist_remove(arraylist_t *list, unsigned int i)
 	if(list==NULL || i>=list->size)
 		return 1;
 	list->size--;
+	if(list->destructor!=NULL)
+		list->destructor(arraylist_get(list, i));
 	memmove(arraylist_get(list, i), arraylist_get(list, i+1), list->elem_size*(list->size-i));
 
 	if((float)list->size/(float)list->alloc_size<list->sink_threshold)
@@ -100,6 +107,12 @@ int arraylist_remove(arraylist_t *list, unsigned int i)
 
 void arraylist_destroy(arraylist_t *list)
 	{
+	if(list->destructor!=NULL)
+		{
+		int i;
+		for(i=0; i<list->size; i++)
+			list->destructor(list->data+i*list->elem_size);
+		}
 	free(list->data);
 	free(list);
 	}
@@ -140,6 +153,7 @@ iterator_t *arraylist_iterator(arraylist_t *list)
 	it->it.has_next=&arraylist_iterator_has_next;
 	it->it.next=&arraylist_iterator_next;
 	it->it.remove=&arraylist_iterator_remove;
+	it->it.dispose=&free;
 	it->list=list;
 	it->off=0;
 

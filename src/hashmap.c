@@ -162,10 +162,11 @@ iterator_t *hashmap_iterator(hashmap_t *map)
 	{
 	struct hashmap_it *it=malloc(sizeof(struct hashmap_it));
 
-	it->it.has_next=hashmap_it_has_next;
-	it->it.next=hashmap_it_next;
-	it->it.reset=hashmap_it_reset;
-	it->it.remove=hashmap_it_remove;
+	it->it.has_next=&hashmap_it_has_next;
+	it->it.next=&hashmap_it_next;
+	it->it.reset=&hashmap_it_reset;
+	it->it.remove=&hashmap_it_remove;
+	it->it.dispose=&free;
 	it->map=map;
 	it->off=0;
 	}

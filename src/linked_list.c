@@ -117,6 +117,7 @@ iterator_t *linked_list_iterator(linked_list_t *list)
 	it->it.next=&linked_list_it_next;
 	it->it.reset=&linked_list_it_reset;
 	it->it.remove=&linked_list_it_remove;
+	it->it.dispose=&free;
 
 	it->list=list;
 	it->cur=list->head;

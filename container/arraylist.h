@@ -29,6 +29,7 @@ typedef struct arraylist
 	float grow_factor;
 	float sink_factor;
 	float sink_threshold;
+	void (*destructor)(void *);
 	} arraylist_t;
 
 struct arraylist_it
@@ -47,7 +48,7 @@ struct arraylist_it
  * @param sink_factor : by how much % sink the list
  * @return the list or NULL on error (can't alloc list or invalid param)	
  */
-arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float grow_factor, float sink_threshold, float sink_factor);
+arraylist_t *arraylist_create(unsigned int initial_cap, size_t elem_size, float grow_factor, float sink_threshold, float sink_factor, void (*destructor)(void*));
 
 /**
  * add element to the list, it will be copied in the list.
