@@ -153,7 +153,7 @@ iterator_t *arraylist_iterator(arraylist_t *list)
 	it->it.has_next=&arraylist_iterator_has_next;
 	it->it.next=&arraylist_iterator_next;
 	it->it.remove=&arraylist_iterator_remove;
-	it->it.dispose=&free;
+	it->it.dispose=(void (*)(iterator_t *))&free;
 	it->list=list;
 	it->off=0;
 

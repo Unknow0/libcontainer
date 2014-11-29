@@ -24,6 +24,7 @@
 typedef struct
 	{
 	size_t (*hash)(void *);
+	void (*destructor)(void *);
 	float load_factor;
 	size_t entries_count;
 	size_t map_size;
@@ -42,7 +43,7 @@ struct hashmap_it
  * initial capacity is 2^log2s
  * return null on error
  */
-hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*));
+hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*), void (*destructor)(void*));
 
 /**
  * put an element into the map.

@@ -25,7 +25,7 @@ hashmap_t *string_unique=NULL;
 void string_init()
 	{
 	if(string_unique==NULL)
-		string_unique=hashmap_create(6, 0.66, &string_hash);
+		string_unique=hashmap_create(6, 0.66, &string_hash, (void (*)(void *))&string_destroy);
 	}
 
 size_t string_hash(void *e)
@@ -47,7 +47,7 @@ string_t *string_create(const char *str)
 
 	s->str=strdup(str);
 	s->ref_count=1;
-	*(size_t *)&s->len=strlen(s->str);
+	*(size_t *)(&s->len)=strlen(s->str);
 	return s;
 	}
 
@@ -62,6 +62,8 @@ string_t *string_create_unique(const char *str)
 		s=string_create(str);
 		hashmap_add(string_unique, s);
 		}
+	else
+		s->ref_count++;
 	return s;
 	}
 

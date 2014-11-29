@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include "container/hashmap.h"
 
-hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*))
+hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*), void (*destructor)(void*))
 	{
 	hashmap_t *hash;
 	if(hash_func==NULL)
@@ -34,6 +34,7 @@ hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_
 	hash->hash=hash_func;
 	hash->load_factor=load_factor;
 	hash->entries_count=0;
+	hash->destructor=destructor;
 
 	return hash;
 	}
@@ -116,6 +117,8 @@ int hashmap_remove(hashmap_t *map, size_t key)
 			i=0;
 		e=map->map_entries[i];
 		}
+	if(map->destructor)
+		map->destructor(e);
 	map->map_entries[i]=NULL;
 	map->entries_count--;
 	return 0;
@@ -126,8 +129,14 @@ void hashmap_destroy(hashmap_t *map)
 	int i;
 	if(map==NULL)
 		return;
-	for(i=0; i<map->map_size; i++)
-		free(map->map_entries[i]);
+	if(map->destructor)
+		{
+		for(i=0; i<map->map_size; i++)
+			{
+			if(map->map_entries[i])
+				map->destructor(map->map_entries[i]);
+			}
+		}
 	free(map->map_entries);
 	free(map);
 	}
@@ -153,8 +162,9 @@ int hashmap_it_reset(iterator_t *i)
 int hashmap_it_remove(iterator_t *i)
 	{
 	struct hashmap_it *it=(struct hashmap_it *)i;
-	free(it->map->map_entries[it->off]);
-	it->map->map_entries[it->off]=NULL;
+	if(it->map->destructor)
+		it->map->destructor(it->map->map_entries[it->off-1]);
+	it->map->map_entries[it->off-1]=NULL;
 	return 0;
 	}
 
@@ -166,7 +176,9 @@ iterator_t *hashmap_iterator(hashmap_t *map)
 	it->it.next=&hashmap_it_next;
 	it->it.reset=&hashmap_it_reset;
 	it->it.remove=&hashmap_it_remove;
-	it->it.dispose=&free;
+	it->it.dispose=(void (*)(iterator_t *))&free;
 	it->map=map;
 	it->off=0;
+
+	return (iterator_t *)it;
 	}
