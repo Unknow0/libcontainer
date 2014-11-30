@@ -125,7 +125,7 @@ int hashmap_remove(hashmap_t *map, size_t key)
 		map->entries_count--;
 		return 0;
 		}
-	retrun 2;
+	return 2;
 	}
 
 void hashmap_destroy(hashmap_t *map)
