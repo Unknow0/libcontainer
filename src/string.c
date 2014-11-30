@@ -22,10 +22,24 @@
 
 hashmap_t *string_unique=NULL;
 
+void string_free(string_t *s)
+	{
+	free((char*)s->str);
+	free(s);
+	}
+
 void string_init()
 	{
 	if(string_unique==NULL)
-		string_unique=hashmap_create(6, 0.66, &string_hash, (void (*)(void *))&string_destroy);
+		string_unique=hashmap_create(6, 0.66, &string_hash, (void (*)(void *))&string_free);
+	}
+
+void string_deinit()
+	{
+	if(string_unique==NULL)
+		return;
+	hashmap_destroy(string_unique);
+	string_unique=NULL;
 	}
 
 size_t string_hash(void *e)
@@ -70,8 +84,5 @@ string_t *string_create_unique(const char *str)
 void string_destroy(string_t *s)
 	{
 	if(--s->ref_count==0)
-		{
-		free((char*)s->str);
-		free(s);
-		}
+		string_free(s);
 	}

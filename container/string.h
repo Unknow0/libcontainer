@@ -30,6 +30,9 @@ typedef struct
 
 size_t string_hash(void *str);
 
+void string_init();
+void string_deinit();
+
 /** create a new string_t 
  * return NULL on error
  */
