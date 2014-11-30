@@ -139,13 +139,7 @@ void chunked_string_destroy(chunked_string_t *list)
 	struct str_chunk *chunk;
 	if(list==NULL)
 		return;
-	chunk=list->head;
-	while(chunk!=NULL)
-		{
-		struct str_chunk *c=chunk->next;
-		free(chunk);
-		chunk=c;
-		}
+	chunked_string_clear(list);
 	free(list);
 	}
 
@@ -154,8 +148,9 @@ void chunked_string_destroy(chunked_string_t *list)
 	struct str_chunk *c=list->head;
 	while(c!=NULL)
 		{
-		c->len=0;
-		c=c->next;
+		struct str_chunk *chunk=c->next;
+		free(c);
+		c=chunk;
 		}
 	list->size=0;
 	}
