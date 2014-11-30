@@ -84,5 +84,5 @@ string_t *string_create_unique(const char *str)
 void string_destroy(string_t *s)
 	{
 	if(--s->ref_count==0)
-		string_free(s);
+		hashmap_remove(string_unique, string_hash((void*)&s));
 	}
