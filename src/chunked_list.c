@@ -153,6 +153,7 @@ void chunked_list_clear(chunked_list_t *list)
 	if(c==NULL)	// nothing to do
 		return;
 	list->size=0;
+	list->head=NULL;
 	while(c!=NULL)
 		{
 		struct chunk *chunk=c->next;

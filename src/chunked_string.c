@@ -153,4 +153,5 @@ void chunked_string_destroy(chunked_string_t *list)
 		c=chunk;
 		}
 	list->size=0;
+	list->head=NULL;
 	}
