@@ -59,7 +59,7 @@ void *hashmap_get(hashmap_t *map, size_t hash);
 
 /**
  * remove element from map.
- * return 0 on success
+ * return 0 on success, 2 if the hash isn't found
  */
 int hashmap_remove(hashmap_t *map, size_t hash);
 

@@ -117,11 +117,15 @@ int hashmap_remove(hashmap_t *map, size_t key)
 			i=0;
 		e=map->map_entries[i];
 		}
-	if(map->destructor)
-		map->destructor(e);
-	map->map_entries[i]=NULL;
-	map->entries_count--;
-	return 0;
+	if(e!=NULL)
+		{
+		if(map->destructor)
+			map->destructor(e);
+		map->map_entries[i]=NULL;
+		map->entries_count--;
+		return 0;
+		}
+	retrun 2;
 	}
 
 void hashmap_destroy(hashmap_t *map)
