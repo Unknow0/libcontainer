@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
 #ifndef _WATCH_H
-#define _WATCH_h
+#define _WATCH_H
 
 #include <sys/inotify.h>
 #include <container/hashmap.h>
