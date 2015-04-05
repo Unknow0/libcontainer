@@ -7,7 +7,8 @@ libcontainer_la_SOURCES=\
 	src/linked_list.c \
 	src/chunked_list.c \
 	src/hashmap.c \
-	src/string.c
+	src/string.c \
+	src/watch.c
 
 pkginclude_HEADERS=container/*.h
 
