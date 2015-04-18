@@ -42,6 +42,19 @@ size_t hash_desc(void *e)
 	{
 	return (size_t)((watch_desc*)e)->wd;
 	}
+void watch_desc_destroy(void *e)
+	{
+	watch_desc *w=(watch_desc *)e;
+	free(w->path);
+	free(w);
+	}
+
+void watch_destroy(watch_t *w)
+	{
+	pthread_cancel(w->thread);
+	hashmap_destroy(w->descriptors);
+	close(w->fd);
+	}
 
 watch_t *watch_create()
 	{
@@ -52,7 +65,7 @@ watch_t *watch_create()
 	w->fd=inotify_init();
 	if(w->fd<0)
 		goto error;
-	w->descriptors=hashmap_create(10, .75, &hash_desc, &free);
+	w->descriptors=hashmap_create(10, .75, &hash_desc, &watch_desc_destroy);
 	if(!w->descriptors)
 		goto error;
 	pthread_create(&w->thread, NULL, &watch_loop, w);
@@ -103,7 +116,11 @@ static void *watch_loop(void *watcher)
 			i+=EVENT_SIZE+e->len;
 			
 			if(w->event)
-				w->event(e);
+				{
+				watch_desc *desc=hashmap_get(w->descriptors, e->wd);
+				if(desc)
+					w->event(e, desc->path);
+				}
 			}
 		}
 	}

@@ -1,3 +1,4 @@
+ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST=README.md
 
 lib_LTLIBRARIES=libcontainer.la

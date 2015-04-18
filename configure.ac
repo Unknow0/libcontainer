@@ -3,18 +3,22 @@
 
 AC_PREREQ([2.69])
 AC_INIT([container], [1.0])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([tools])
+AC_CONFIG_SRCDIR([src/linked_list.c])
 
 LT_INIT
 AM_INIT_AUTOMAKE([foreign])
-
-AC_CONFIG_SRCDIR([src/linked_list.c])
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
 
 # Checks for libraries.
+AX_PTHREAD([], AC_MSG_ERROR([pthread not found]))
+LIBS="$PTHREAD_LIBS $LIBS"
+CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+CC="$PTHREAD_CC"
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h])

@@ -28,7 +28,7 @@ typedef struct
 	pthread_t thread;
 	
 	// call for each event
-	void (*event)(struct inotify_event *e);
+	void (*event)(struct inotify_event *e, const char *path);
 	} watch_t;
 
 watch_t *watch_create();
