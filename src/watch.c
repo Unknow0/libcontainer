@@ -15,7 +15,6 @@
  * with mserver; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
-#include <logger.h>
 
 #include <sys/inotify.h>
 #include <pthread.h>
@@ -33,8 +32,6 @@ typedef struct
 	int wd;
 	char *path;
 	} watch_desc;
-
-static logger_t *log;
 
 static void *watch_loop(void *NA);
 
@@ -58,7 +55,6 @@ void watch_destroy(watch_t *w)
 
 watch_t *watch_create(void *payload)
 	{
-	log=get_logger("mserver.watch");
 	watch_t *w=malloc(sizeof(watch_t));
 	if(!w)
 		return NULL;
@@ -108,7 +104,6 @@ static void *watch_loop(void *watcher)
 			{
 			if(errno == EINTR)
 				continue;
-			// TODO log
 			}
 		
 		while(i<len)
