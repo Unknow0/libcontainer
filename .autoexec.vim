@@ -1,4 +1,4 @@
-let s:name = "libcontainer"
+let s:name = "libutils"
 if match(expand("%:e"), "[hc]$")>=0
 	kZ
 	0

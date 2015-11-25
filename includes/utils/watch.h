@@ -19,7 +19,7 @@
 #define _WATCH_H
 
 #include <sys/inotify.h>
-#include <container/hashmap.h>
+#include <utils/hashmap.h>
 
 typedef struct
 	{
@@ -28,10 +28,11 @@ typedef struct
 	pthread_t thread;
 	
 	// call for each event
-	void (*event)(struct inotify_event *e, const char *path);
+	void (*event)(struct inotify_event *e, const char *path, void *playload);
+	void *payload;
 	} watch_t;
 
-watch_t *watch_create();
+watch_t *watch_create(void *payload);
 void watch_destroy(watch_t*);
 
 int watch(watch_t *w, const char *dir);

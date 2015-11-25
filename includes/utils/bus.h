@@ -15,39 +15,34 @@
  * with libutils; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
+#ifndef _UTILS_BUS_H
+#define _UTILS_BUS_H
 
-#include "utils/chunked_string.h"
+#include <pthread.h>
 
-#include <string.h>
-#include <stdio.h>
-
-struct e
+typedef struct bus_event_t
 	{
-	int i;
-	char *v;
-	};
+	void (*callback)(void*);
+	void *arg;
+	} bus_event_t;
 
-int main(int argc, char** argv)
+typedef struct bus_t
 	{
-	char s[16];
-	int i;
-	chunked_string_t *l=chunked_string_create(35);
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+	pthread_t loop;
 
-	
-	for(i=0; i<200; i++)
-		{
-		sprintf((char *)&s, "i am: %d ", i);
-		chunked_string_add(l, s);
-		}
+	size_t event_off;
+	size_t event_count;
+	size_t event_size;
+	bus_event_t event[0];
+	} bus_t;
 
 
-	struct str_chunk *c=l->head;
-	while(c!=NULL)
-		{
-		printf("%.35s", c->data);
-		c=c->next;
-		}
-	printf("\n");
-	
-	return 0;
-	}
+bus_t *bus_create(size_t max_event);
+
+int bus_add(bus_t *bus, void (*callback)(void*), void *arg);
+
+void bus_destroy(bus_t *bus);
+
+#endif

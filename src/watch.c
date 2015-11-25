@@ -22,8 +22,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "container/hashmap.h"
-#include "container/watch.h"
+#include "utils/hashmap.h"
+#include "utils/watch.h"
 
 #define EVENT_SIZE (sizeof(struct inotify_event))
 #define BUF_SIZE (1024*EVENT_SIZE)
@@ -56,7 +56,7 @@ void watch_destroy(watch_t *w)
 	close(w->fd);
 	}
 
-watch_t *watch_create()
+watch_t *watch_create(void *payload)
 	{
 	log=get_logger("mserver.watch");
 	watch_t *w=malloc(sizeof(watch_t));
@@ -68,6 +68,7 @@ watch_t *watch_create()
 	w->descriptors=hashmap_create(10, .75, &hash_desc, &watch_desc_destroy);
 	if(!w->descriptors)
 		goto error;
+	w->payload=payload;
 	pthread_create(&w->thread, NULL, &watch_loop, w);
 	return w;
 error:
@@ -119,7 +120,7 @@ static void *watch_loop(void *watcher)
 				{
 				watch_desc *desc=hashmap_get(w->descriptors, e->wd);
 				if(desc)
-					w->event(e, desc->path);
+					w->event(e, desc->path, w->payload);
 				}
 			}
 		}

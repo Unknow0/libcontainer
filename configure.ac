@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([container], [1.0])
+AC_INIT([utils], [1.0])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([tools])
 AC_CONFIG_SRCDIR([src/linked_list.c])
@@ -34,6 +34,6 @@ AC_CHECK_FUNCS([memmove memset strdup])
 
 AC_CONFIG_FILES([
 	Makefile
-	container.pc
+	utils.pc
 	])
 AC_OUTPUT

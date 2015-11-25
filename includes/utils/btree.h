@@ -15,39 +15,36 @@
  * with libutils; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
+#ifndef _BTREE_H
+#define _BTREE_H
 
-#include "utils/chunked_string.h"
+#include <stdlib.h>
 
-#include <string.h>
-#include <stdio.h>
-
-struct e
+typedef struct btree_index
 	{
-	int i;
-	char *v;
-	};
-
-int main(int argc, char** argv)
+	char leaf;
+	unsigned int len;
+	struct btree_index **data;
+	} btree_index_t;
+typedef struct btree_data
 	{
-	char s[16];
-	int i;
-	chunked_string_t *l=chunked_string_create(35);
+	char leaf;
+	unsigned int len;
+	struct data_bloc *next;
+	void *data;
+	} btree_data_t;
 
-	
-	for(i=0; i<200; i++)
-		{
-		sprintf((char *)&s, "i am: %d ", i);
-		chunked_string_add(l, s);
-		}
+typedef struct
+	{
+	size_t bloc_size;
+	size_t elem_size;
+	int (*cmp)(void *, void*);
+	btree_index_t *index;
+	btree_data_t *head;
+	} btree_t;
 
+btree_t *btree_create(size_t bloc_size, size_t elem_size, int (*cmp)(void*,void*));
 
-	struct str_chunk *c=l->head;
-	while(c!=NULL)
-		{
-		printf("%.35s", c->data);
-		c=c->next;
-		}
-	printf("\n");
-	
-	return 0;
-	}
+int btree_add(btree_t *index, void *e);
+
+#endif

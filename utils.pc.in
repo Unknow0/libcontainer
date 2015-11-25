@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: container
-Description: Reusable container library
+Name: utils
+Description: Reusable utils library
 Version: @VERSION@
 Requires:
-Libs: -L${libdir} -lcontainer
+Libs: -L${libdir} -lutils
 Cflags: -I${includedir}

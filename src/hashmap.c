@@ -1,24 +1,24 @@
 /*******************************************************************************
- * This file is part of libcontainer.
+ * This file is part of libutils.
  *
- * libcontainer is free software; you can redistribute it and/or modify
+ * libutils is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
- * libcontainer is distributed in the hope that it will be useful,
+ * libutils is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License along
- * with libcontainer; if not, write to the Free Software Foundation, Inc.,
+ * with libutils; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
 
 #include <string.h>
 #include <stdio.h>
-#include "container/hashmap.h"
+#include "utils/hashmap.h"
 
 hashmap_t *hashmap_create(unsigned char log2s, float load_factor, size_t (*hash_func)(void*), void (*destructor)(void*))
 	{
@@ -77,7 +77,7 @@ int hashmap_add(hashmap_t *map, void *e)
 	e2=map->map_entries[i];
 	while(e2!=NULL && h!=map->hash(e2))
 		{
-		if(++i>map->map_size)
+		if(++i>=map->map_size)
 			i=0;
 		e2=map->map_entries[i];
 		}
@@ -96,7 +96,7 @@ void *hashmap_get(hashmap_t *map, size_t key)
 	e=map->map_entries[i];
 	while(e!=NULL && map->hash(e)!=key)
 		{
-		if(++i>map->map_size)
+		if(++i>=map->map_size)
 			i=0;
 		e=map->map_entries[i];
 		}
@@ -113,7 +113,7 @@ int hashmap_remove(hashmap_t *map, size_t key)
 	e=map->map_entries[i];
 	while(e!=NULL && map->hash(e)!=key)
 		{
-		if(++i>map->map_size)
+		if(++i>=map->map_size)
 			i=0;
 		e=map->map_entries[i];
 		}
